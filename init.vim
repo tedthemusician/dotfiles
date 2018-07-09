@@ -2,36 +2,46 @@
 
 call plug#begin()
 Plug 'airblade/vim-gitgutter'
+Plug 'alvan/vim-closetag'
+Plug 'dag/vim2hs'
 Plug 'FooSoft/vim-argwrap'
 Plug 'godlygeek/tabular'
 Plug 'henrik/vim-indexed-search'
 Plug 'honza/vim-snippets'
 Plug 'jiangmiao/auto-pairs'
-" Skip paragraph boundaries in closed folds
 Plug 'justinmk/vim-ipmotion'
+Plug 'kana/vim-textobj-indent'
 Plug 'kana/vim-textobj-user'
 Plug 'machakann/vim-highlightedyank'
-Plug 'neomake/neomake'
-Plug 'kana/vim-textobj-indent'
-Plug 'othree/html5.vim'
+Plug 'mxw/vim-jsx'
+Plug 'ncm2/ncm2'
+Plug 'ncm2/ncm2-tern', {'do': 'npm install'}
+Plug 'ncm2/ncm2-ultisnips'
+Plug 'posva/vim-vue'
+Plug 'roxma/nvim-yarp'
 Plug 'rstacruz/sparkup'
 Plug 'scrooloose/nerdtree'
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'Shougo/neosnippet.vim'
-Plug 'Shougo/neosnippet-snippets'
-" Plug 'SirVer/ultisnips'
+Plug 'SirVer/ultisnips'
+Plug 'supercollider/scvim'
 Plug 'tommcdo/vim-exchange'
 Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
+Plug 'udalov/kotlin-vim'
 Plug 'vim-airline/vim-airline'
-" Plug 'Yggdroot/indentLine'
+Plug 'vim-ruby/vim-ruby'
+Plug 'w0rp/ale'
+Plug 'wavded/vim-stylus'
+Plug 'WolfgangMehner/c-support'
+
 call plug#end()
 
 au BufRead,BufNewFile jquery.*.js set ft=javascript syntax=jquery
 au BufRead,BufNewFile *.json set ft=json syntax=json
+au BufRead,BufNewFile *.lyr set ft=lyr syntax=lyr
+au BufEnter * call ncm2#enable_for_buffer()
 
 " Spacebar leader
 let mapleader = "\<Space>"
@@ -40,6 +50,8 @@ inoremap jk <esc>
 nnoremap <backspace> :noh<cr>
 nnoremap <silent> <expr> j (v:count == 0 ? 'gj' : 'j')
 nnoremap <silent> <expr> k (v:count == 0 ? 'gk' : 'k')
+nnoremap <silent> gl :ALENextWrap<cr>
+nnoremap <silent> gL :ALEPreviousWrap<cr>
 nnoremap Y y$
 nnoremap / /\v
 vnoremap / /\v
@@ -51,6 +63,12 @@ nnoremap <c-up> <c-w>k
 nnoremap <c-right> <c-w>l
 nnoremap <c-n> :NERDTreeToggle<cr>
 inoremap <c-o> <esc>O
+inoremap <expr> <Tab>   pumvisible() ? "\<c-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<c-p>" : "\<S-Tab>"
+nnoremap - ddkP==
+nnoremap + ddp==
+vnoremap - dkP==1v
+vnoremap + dp==1v
 nnoremap <leader>break :set wrap! linebreak!<cr>
 nnoremap <leader>c "*y
 nnoremap <leader>C gg"*yG``
@@ -59,45 +77,35 @@ nnoremap <leader>V ggVG"*p
 nnoremap <leader>indent gg=G``
 nnoremap <leader>node :! node % <cr>
 nnoremap <leader>runpy :! python3 % <cr>
+nnoremap <leader>runp2 :! python % <cr>
+nnoremap <leader>runr :! ruby % <cr>
 nnoremap <leader>rot ggg?G``
 nnoremap <leader>xxx ggg?GZZ
 nnoremap <leader>/ :Commentary<cr>
 vnoremap <leader>/ :Commentary<cr>
-imap <expr><TAB> neosnippet#expandable_or_jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
-smap <expr><TAB> neosnippet#expandable_or_jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
-xmap <expr><TAB> neosnippet#expandable_or_jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
-" nnoremap <silent> <leader>aw :ArgWrap<cr>
+nnoremap <leader>init :tabe ~/.config/nvim/init.vim<cr>
 
 syntax on
 
-" Linters
-" Run Neomake on write
-autocmd! BufWritePost,BufEnter * Neomake
-let g:neomake_javascript_enabled_makers = ['eslint']
-
 let g:python3_host_prog = '/usr/local/bin/python3'
+
+let g:ale_lint_delay = 500
 
 " Don't change Haskell lambdas and composition operators to unicode
 let g:haskell_conceal = 0
 
 let g:highlightedyank_highlight_duration = 600
-" Yggdroot indent guide
-" let g:indentLine_char = '│'
+
+let g:html_indent_autotags = "html,head,body"
 
 let g:pymode_python = 'python3'
 
 " Make { and  } skip closed folds
 let g:ip_skipfold=1
 
-" Fucking show json quotes, thanks indentLine
-let g:indentLine_noConcealCursor=""
-au BufRead,BufNewFile *.json set ft=javascript
-
-" God knows why deoplete isn't enabled at startup
-let g:deoplete#enable_at_startup = 1
-
 set autoindent
 set cc=80,100,120
+set completeopt=noinsert,menuone,noselect
 set conceallevel=2
 set concealcursor=niv
 set cursorline
