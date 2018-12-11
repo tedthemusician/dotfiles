@@ -4,22 +4,28 @@ call plug#begin()
 Plug 'airblade/vim-gitgutter'
 Plug 'alvan/vim-closetag'
 Plug 'dag/vim2hs'
+Plug 'fatih/vim-go'
 Plug 'FooSoft/vim-argwrap'
 Plug 'godlygeek/tabular'
 Plug 'henrik/vim-indexed-search'
 Plug 'honza/vim-snippets'
 Plug 'jiangmiao/auto-pairs'
+Plug 'JuliaEditorSupport/julia-vim'
 Plug 'justinmk/vim-ipmotion'
 Plug 'kana/vim-textobj-indent'
 Plug 'kana/vim-textobj-user'
 Plug 'machakann/vim-highlightedyank'
+Plug 'mattn/emmet-vim'
 Plug 'mxw/vim-jsx'
 Plug 'ncm2/ncm2'
 Plug 'ncm2/ncm2-tern', {'do': 'npm install'}
 Plug 'ncm2/ncm2-ultisnips'
+Plug 'pangloss/vim-javascript'
 Plug 'posva/vim-vue'
 Plug 'roxma/nvim-yarp'
-Plug 'rstacruz/sparkup'
+Plug 'RRethy/vim-illuminate'
+Plug 'rhysd/vim-crystal'
+" Plug 'rstacruz/sparkup'
 Plug 'scrooloose/nerdtree'
 Plug 'SirVer/ultisnips'
 Plug 'supercollider/scvim'
@@ -57,14 +63,15 @@ nnoremap / /\v
 vnoremap / /\v
 nnoremap ? ?\v
 vnoremap ? ?\v
-nnoremap <c-left> <c-w>h
-nnoremap <c-down> <c-w>j
-nnoremap <c-up> <c-w>k
-nnoremap <c-right> <c-w>l
+nnoremap <left> <c-w>h
+nnoremap <down> <c-w>j
+nnoremap <up> <c-w>k
+nnoremap <right> <c-w>l
 nnoremap <c-n> :NERDTreeToggle<cr>
 inoremap <c-o> <esc>O
 inoremap <expr> <Tab>   pumvisible() ? "\<c-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<c-p>" : "\<S-Tab>"
+inoremap <c-u> <esc>gUiwea
 nnoremap - ddkP==
 nnoremap + ddp==
 vnoremap - dkP==1v
@@ -72,6 +79,7 @@ vnoremap + dp==1v
 nnoremap <leader>break :set wrap! linebreak!<cr>
 nnoremap <leader>c "*y
 nnoremap <leader>C gg"*yG``
+nnoremap <leader>dfn _f{d%dd
 nnoremap <leader>v "*p
 nnoremap <leader>V ggVG"*p
 nnoremap <leader>indent gg=G``
@@ -91,6 +99,13 @@ let g:python3_host_prog = '/usr/local/bin/python3'
 
 let g:ale_lint_delay = 500
 
+let g:closetag_html_filetypes = 'html,vue'
+let g:closetag_xhtml_filetypes = 'xhtml,jsx'
+
+let g:go_fmt_command = "goimports"
+
+let g:user_emmet_expandabbr_key = '<c-e>'
+
 " Don't change Haskell lambdas and composition operators to unicode
 let g:haskell_conceal = 0
 
@@ -106,7 +121,6 @@ let g:ip_skipfold=1
 set autoindent
 set cc=80,100,120
 set completeopt=noinsert,menuone,noselect
-set conceallevel=2
 set concealcursor=niv
 set cursorline
 set expandtab
