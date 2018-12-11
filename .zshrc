@@ -55,10 +55,6 @@ plugins=(git zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
 
-if [[ -r ~/.zshlocal ]]; then
-    source ~/.zshlocal
-fi
-
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
@@ -67,10 +63,9 @@ fi
 # export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
+  export EDITOR='vim'
 # else
-#   export EDITOR='mvim'
+  export EDITOR='nvim'
 # fi
 
 # Compilation flags
@@ -89,16 +84,77 @@ fi
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 # - - - - - - - ALIASES - - - - - - - 
 
-alias lsd='ls -d */' # List directories only
+# Directory changes
+alias docprog='cd ~/Documents/Programming'
+alias doclive='cd ~/Documents/Native\ Live\ Sets/Live\ 10'
+alias docsite='cd ~/Documents/site'
+alias docsongs='cd ~/Documents/Songs'
+alias sc='cd ~/Documents/scratch'
+
+# Bash (?)
+alias lsd='ls -da1 */' # List directories only
+
+# FTP/SSH
+alias ton='echo "u38678890-term" | pbcopy'
+alias vimton='echo "e scp://u38678890-term@tedoliver.net/" | pbcopy && mvim'
+alias vimpi='echo "e scp://pi@192.168.1.71/" | pbcopy && mvim'
+alias ftpton='lftp u38678890-term@home134770133.1and1-data.host'
+alias sshton='ssh u38678890@home134770133.1and1-data.host'
+alias sshpi='ssh pi@70.250.114.115'
+alias sshlin='ssh ted@50.116.34.78'
+
+# Fixes
+alias tree='tree -I node_modules'
+alias v='nvim'
+
+# Haskell
+alias ghc='stack ghc'
+alias ghci='stack ghci'
+alias runghc='stack runghc'
+alias bills='~/Documents/Programming/Haskell/bills/bills'
+alias cc='~/Documents/Programming/Haskell/cc/cc'
+
+# Kotlin
+alias ks='kotlinc -script'
+
+# Python (all weather)
+alias python='python3'
+alias weather='python3 ~/Documents/Programming/Python/weather/current.py'
+alias forecasth='python3 ~/Documents/Programming/Python/weather/hourly.py'
+alias forecast10='python3 ~/Documents/Programming/Python/weather/ten_day_numeric.py'
+alias forecast10g='python3 ~/Documents/Programming/Python/weather/ten_day_num_graph.py'
+alias forecast10x='python3 ~/Documents/Programming/Python/weather/ten_day_text.py'
+alias weight='python3 ~/Documents/Programming/Python/fitness/add_weight.py'
+alias weightcsv='python3 ~/Documents/Programming/Python/fitness/make_csv.py'
+alias pyserver='python3 -m http.server'
+alias py='python3'
+
+# Ruby
+alias game='ruby ~/Documents/Programming/Ruby/weather/game.rb'
+alias rhyme='ruby ~/Documents/Programming/Ruby/rhymebrain.rb'
+alias syns='ruby ~/Documents/Programming/Ruby/thesaurus.rb'
+alias timer='ruby ~/Documents/Programming/Ruby/timer.rb'
 
 # Misc utilities
+alias cmon='sudo !!'
+alias findmy='python3 ~/Documents/Programming/Python/moving.py'
+alias g='rg'
+alias journal='entry'
+alias l='ls -AThop'
 alias pingas='ping -c 10 8.8.8.8'
 alias pbclear='echo -n "" | pbcopy'
+alias unsafechrome='/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --disable-web-security'
+
+# Pretty much unused
+alias swift='/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift'
+alias llp='~/llppublish.sh'
 
 # Silly
 alias :x='echo "Does this look like vim to you?"'
 alias :w='echo "Does this look like vim to you?"'
 alias :q='echo "Does this look like vim or GHCi to you?"'
+
+# - - - - - - END ALIASES - - - - - -
 
 # - - - - - CUSTOM FUNCTIONS - - - - -
 
@@ -108,17 +164,104 @@ cwd () {
     pwd
 }
 
+dfe () {
+    echo -n "" | pbcopy
+    # TODO: zsh history
+    > .bash_history
+    > .viminfo
+    history -c
+}
+
+# Create new journal entry under current date; open it in Vim
+entry () {
+    echo "" >> "/Users/Ted/Documents/scratch/journal.txt"
+    date >> "/Users/Ted/Documents/scratch/journal.txt"
+    nvim "/Users/Ted/Documents/scratch/journal.txt"
+}
+
+# Print last read page of Haskell Book, open Haskell Book, and prompt closing page
+alias haskellbook='open ~/Documents/Misc/Haskell\ Programming\ From\ First\ Principles.pdf && prog haskell && cd learning/firstPrinciples'
+
+html () {
+    template_root=/Users/Ted/Documents/site/templates
+    cp "$template_root/index.html" .
+    cp "$template_root/stylesheet.css" .
+    cp "$template_root/main.js" .
+}
+
+kcr () {
+    kotlinc $1.kt -include-runtime -d $1.jar && java -jar $1.jar
+}
+
+kjar () {
+    java -jar "$@"
+}
+
 # Make and enter directory
 mkcd () {
     mkdir $1
     cd $1
 }
 
+prog () {
+    cd ~/Documents/Programming
+    cd $1
+}
+
+# Get current weather conditions, hourly forecast, and 10-day forecast with graph
+weatherfull () {
+    if [ $# -eq 0 ]; then
+        weather raleigh nc
+        forecasth raleigh nc
+        forecast10g raleigh nc
+    else
+        weather $@
+        forecasth $@
+        forecast10g $@
+    fi
+}
+
+weatherless () {
+    weatherfull $@ | less
+}
+
+saw () {
+    ext=$(diskutil list | fgrep 'External HD' | grep -o 'disk\ds\d');
+    backup=$(diskutil list | fgrep 'Backup HD' | grep -o 'disk\ds\d');
+    diskutil unmount $ext;
+    diskutil unmount $backup;
+}
+
+rest () {
+    saw
+    exit
+}
+
+scaf () {
+    if [[ -d $1 ]]; then
+        echo "Directory \`$1\` already exists."
+        return 1
+    fi
+    mkdir $1
+    cd $1
+    cp ~/.resources/scaffold.html index.html
+    touch stylesheet.css
+    touch main.js
+}
+
 nano () {
-    echo "Learn vi, bitch."
+    echo "Fuck you. Learn vi."
 }
 
 # - - - - END CUSTOM FUNCTIONS - - - -
 
 # Personal config
 unsetopt histverify
+
+# Setting PATH for Python 3.6
+# The original version is saved in .bash_profile.pysave
+# TODO: need these?
+# PATH="/Library/Frameworks/Python.framework/Versions/3.6/bin:${PATH}"
+export PATH="/Users/Ted/.local/bin:$PATH"
+
+export PATH="/usr/local/bin:$PATH"
